@@ -73,12 +73,12 @@ public class Player : MonoBehaviour
 
         if (horizontalInput > 0)
         {
-            transform.localScale = new Vector3(1, transform.localScale.y, transform.localScale.z);
+            transform.localScale = new Vector3(Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
             controller.SetBool("isMoving", true);
             facingRight = -1;
         } else if (horizontalInput < 0)
         {
-            transform.localScale = new Vector3(-1, transform.localScale.y, transform.localScale.z);
+            transform.localScale = new Vector3(Mathf.Abs(transform.localScale.x) * -1, transform.localScale.y, transform.localScale.z);
             controller.SetBool("isMoving", true);
             facingRight = 1;
         } else
