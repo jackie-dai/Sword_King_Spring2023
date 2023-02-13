@@ -232,11 +232,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4063368851751735990, guid: 5a5dcfd74500ddb4b895be4e8dd57884, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -2.2
+      value: -2.21
       objectReference: {fileID: 0}
     - target: {fileID: 4063368851751735990, guid: 5a5dcfd74500ddb4b895be4e8dd57884, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.17
+      value: -0.16
       objectReference: {fileID: 0}
     - target: {fileID: 4063368851751735990, guid: 5a5dcfd74500ddb4b895be4e8dd57884, type: 3}
       propertyPath: m_LocalPosition.z
@@ -273,6 +273,10 @@ PrefabInstance:
     - target: {fileID: 4732938030721552157, guid: 5a5dcfd74500ddb4b895be4e8dd57884, type: 3}
       propertyPath: m_Name
       value: Spikes
+      objectReference: {fileID: 0}
+    - target: {fileID: 4732938030721552157, guid: 5a5dcfd74500ddb4b895be4e8dd57884, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5a5dcfd74500ddb4b895be4e8dd57884, type: 3}

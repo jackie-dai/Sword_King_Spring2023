@@ -5,7 +5,7 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     private Rigidbody2D rb;
-    private bool isJumping = false;
+    public bool canJump = true;
     private Animator controller;
     private int facingRight = -1;
     private float checkRadius = 10;
@@ -14,8 +14,6 @@ public class Player : MonoBehaviour
     /* PREFABS */
     [SerializeField]
     private GameObject swordCollider;
-    [SerializeField]
-    private Transform feet;
     /* EDITABLE VARIABLES */
     [SerializeField]
     public float jumpVelocity = 5f;
@@ -32,10 +30,10 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space) && !isJumping)
+        if (Input.GetKeyDown(KeyCode.Space) && canJump)
         {
             rb.velocity = Vector2.up * jumpVelocity;
-            isJumping = true;
+            canJump = false;
         }
        
         if (Input.GetKey(KeyCode.Mouse0))
@@ -91,12 +89,14 @@ public class Player : MonoBehaviour
         }
     }
 
+    public void ResetJump()
+    {
+        Debug.Log("rests jmp");
+        canJump = true;
+    }
+
     private void OnCollisionEnter2D(Collision2D other)
     {   
-        if (other.transform.tag == "Floor")
-        {
-            isJumping = false;
-        }
         if (other.transform.tag == "Spikes")
         {
             Debug.Log("killed");
