@@ -13,6 +13,10 @@ public class Enemy : MonoBehaviour
     private float strafeAmount = 2f;
     [SerializeField]
     private float strafeDuration = 1f;
+    [SerializeField]
+    private Player player;
+    [SerializeField]
+    private Animator animationControl;
 
     private void Awake()
     {
@@ -45,12 +49,14 @@ public class Enemy : MonoBehaviour
     }
     
     /* Reduces health and flashes white -> red on hit */
-    public void TakeDamage()
+    public void TakeDamage(int amount)
     {
-        _lives -= 1;
+        _lives -= amount;
+        //Debug.Log("Hit");
         StartCoroutine(Flash());
         if (_lives < 1)
         {
+            player.gold += 1;
             Destroy(this.gameObject);
         }
     }
@@ -58,9 +64,25 @@ public class Enemy : MonoBehaviour
     /* Coroutine for flashing white & red */
     IEnumerator Flash()
     {
-        spriteRenderer.color = Color.white;
+
+        if (animationControl != null)
+        {
+            animationControl.SetBool("Hit", true);
+            spriteRenderer.color = Color.red;
+        } else
+        {
+            spriteRenderer.color = Color.white;
+        }
+
         yield return new WaitForSeconds(0.25f);
-        spriteRenderer.color = Color.red;
+        if (animationControl != null)
+        {
+           animationControl.SetBool("Hit", false);
+            spriteRenderer.color = Color.white;
+        } else
+        {
+            spriteRenderer.color = Color.red;
+        }
     }
 
 }

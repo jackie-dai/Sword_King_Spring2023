@@ -20,32 +20,60 @@ public class Player : MonoBehaviour
     [SerializeField]
     public float movementSpeed = 5f;
     private float slashDuration = 0.3f;
+    [SerializeField]
+    public int gold = 0;
+    public Sword[] swords;
+    public Item[] items;
+    private int swordInt = 1;
+    private int itemInt = 0;
 
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         controller = GetComponent<Animator>();
+        swords[0] = swordCollider.GetComponent<Sword>();
     }
 
     // Update is called once per frame
     void Update()
     {
+        //Handles jump
         if (Input.GetKeyDown(KeyCode.Space) && canJump)
         {
             rb.velocity = Vector2.up * jumpVelocity;
             canJump = false;
         }
-       
+       //Handles attack
         if (Input.GetKey(KeyCode.Mouse0))
         {
             controller.Play("Slash");
             controller.SetBool("isHitting", true);
             StartCoroutine(Slash());
         }
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            useItem(0);
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha2))
+        {
+            useItem(1);
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha3))
+        {
+            useItem(2);
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha4))
+        {
+            useItem(3);
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha5))
+        {
+            useItem(4);
+        }
 
         CalculateMovement();
     }
-
+    //Handles the sword slash attack
     IEnumerator Slash()
     {
         swordCollider.SetActive(true);
@@ -86,6 +114,42 @@ public class Player : MonoBehaviour
         } else
         {
             controller.SetBool("isMoving", false);
+        }
+    }
+
+    public void addSword(Sword newSword)
+    {
+        swords[swordInt] = newSword;
+        swordInt += 1;
+        if (swordInt > swords.Length - 1)
+        {
+            swordInt = 0;
+        } 
+    }
+
+    public void addItem(Item newItem)
+    {
+        items[itemInt] = newItem;
+        itemInt += 1;
+        if (itemInt > items.Length - 1)
+        {
+            itemInt = 0;
+        }
+    }
+
+    public void useItem(int itemIndex)
+    {
+        //int itemIndex = System.Array.IndexOf(items, item);
+        Item item = items[itemIndex];
+        if (item != null)
+        {
+            item.useAbility();
+            items[itemIndex] = null;
+            for (int i = itemIndex; i < items.Length - 1; i++)
+            {
+                items[i] = items[i + 1];
+            }
+            itemInt -= 1;
         }
     }
 
