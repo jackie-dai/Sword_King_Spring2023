@@ -6,6 +6,10 @@ using UnityEngine.SceneManagement;
 public class Portal : MonoBehaviour
 {
     private Scene currentScene;
+    /* PlEASE MAKE SURE TO UPDATE NEXTSCENEINDEX IN UNITY INTERFACE */
+    /* Default: 0 -> "Demo Level" */
+    [SerializeField]
+    private int nextSceneIndex = 0;
 
     void Start()
     {
@@ -25,15 +29,10 @@ public class Portal : MonoBehaviour
     {
         if (other.tag == "Player")
         {
-            /* PlEASE MAKE SURE TO UPDATE CODE EACH TIME YOU CREATE A NEW LEVEL */
-
-            if (currentScene.name == "Level1")
-            {
-                SceneManager.LoadScene(0); // 0 is demo level 
-            }
+            SceneManager.LoadScene(nextSceneIndex);
 
             /* Updates to new scene */
-            currentScene = SceneManager.GetActiveScene();
+            Start();
         }
     }
 }
