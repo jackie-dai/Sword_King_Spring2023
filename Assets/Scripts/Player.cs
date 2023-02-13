@@ -5,12 +5,17 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     private Rigidbody2D rb;
-    private bool canJump = true;
+    private bool isJumping = false;
     private Animator controller;
     private int facingRight = -1;
+    private float checkRadius = 10;
+    [SerializeField]
+    private LayerMask floorObjects;
     /* PREFABS */
     [SerializeField]
     private GameObject swordCollider;
+    [SerializeField]
+    private Transform feet;
     /* EDITABLE VARIABLES */
     [SerializeField]
     public float jumpVelocity = 5f;
@@ -27,10 +32,10 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space) && canJump)
+        if (Input.GetKeyDown(KeyCode.Space) && !isJumping)
         {
             rb.velocity = Vector2.up * jumpVelocity;
-            canJump = false;
+            isJumping = true;
         }
        
         if (Input.GetKey(KeyCode.Mouse0))
@@ -42,7 +47,7 @@ public class Player : MonoBehaviour
 
         CalculateMovement();
     }
-        
+
     IEnumerator Slash()
     {
         swordCollider.SetActive(true);
@@ -66,8 +71,7 @@ public class Player : MonoBehaviour
     private void CalculateMovement()
     {
         float horizontalInput = Input.GetAxis("Horizontal");
-        float verticalInput = Input.GetAxis("Vertical");
-        Vector3 direction = new Vector3(horizontalInput, verticalInput, 0);
+        Vector3 direction = new Vector3(horizontalInput, 0, 0);
 
         transform.Translate(direction * movementSpeed * Time.deltaTime);
 
@@ -91,9 +95,8 @@ public class Player : MonoBehaviour
     {   
         if (other.transform.tag == "Floor")
         {
-            canJump = true;
+            isJumping = false;
         }
-        
         if (other.transform.tag == "Spikes")
         {
             Debug.Log("killed");
