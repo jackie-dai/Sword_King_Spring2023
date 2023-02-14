@@ -30,7 +30,7 @@ public class Player : MonoBehaviour
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
-        controller = GetComponent<Animator>();
+        animationController = GetComponent<Animator>();
     }
 
     // Update is called once per frame
@@ -46,7 +46,7 @@ public class Player : MonoBehaviour
         if (Input.GetKey(KeyCode.Mouse0))
         {
             animationController.SetTrigger("Attack");
-            StartCoroutine(Attack());
+            StartCoroutine(Slash());
         }
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
@@ -82,7 +82,7 @@ public class Player : MonoBehaviour
             if (hit.transform.tag == "Enemy")
             {
                 Enemy enemy = hit.transform.GetComponent<Enemy>();
-                enemy.TakeDamage();
+                enemy.TakeDamage(1);
             }
         }
     }
