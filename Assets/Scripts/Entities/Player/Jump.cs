@@ -20,9 +20,6 @@ public class Jump : MonoBehaviour
         if (falling())
         {
             rb.velocity += Vector2.up * Physics2D.gravity.y * (fallMultiplier - 1) * Time.deltaTime;
-        } else if (falling() && !Input.GetKey(KeyCode.Space))
-        {
-            rb.velocity += Vector2.up * Physics2D.gravity.y * (lowJumpMultiplier - 1) * Time.deltaTime;
         }
     }
     bool falling()

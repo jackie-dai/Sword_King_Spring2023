@@ -26,6 +26,8 @@ public class Player : MonoBehaviour
     public Item[] items;
     private int swordInt = 1;
     private int itemInt = 0;
+    [SerializeField]
+    private int health = 0;
 
     void Awake()
     {
@@ -43,7 +45,7 @@ public class Player : MonoBehaviour
             canJump = false;
         }
        
-        if (Input.GetKey(KeyCode.Mouse0))
+        if (Input.GetKeyDown(KeyCode.Mouse0))
         {
             animationController.SetTrigger("Attack");
             StartCoroutine(Slash());
@@ -143,6 +145,15 @@ public class Player : MonoBehaviour
                 items[i] = items[i + 1];
             }
             itemInt -= 1;
+        }
+    }
+
+    public void takeDamage(int amount)
+    {
+        health -= amount;
+        if (health < 0)
+        {
+            Destroy(this.gameObject);
         }
     }
 
