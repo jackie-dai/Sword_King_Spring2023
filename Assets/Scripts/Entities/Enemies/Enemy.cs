@@ -27,6 +27,16 @@ public class Enemy : MonoBehaviour
         StartCoroutine(Strafe());
     }
 
+    public void OnTriggerEnter2D(Collider2D other)
+    {
+        Debug.Log(other.tag);
+        if (other.tag == "Player")
+        {
+            Debug.Log("Taking damage");
+            player.takeDamage(1);
+        }
+    }
+
     /* Moves object left and right by offset strafeAmount */
     IEnumerator Strafe()
     {
