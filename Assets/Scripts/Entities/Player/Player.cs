@@ -6,11 +6,11 @@ public class Player : MonoBehaviour
 {
     private Rigidbody2D rb;
     public bool canJump = true;
-    private Animator controller;
-    private int facingRight = -1;
-    private float checkRadius = 10;
-    [SerializeField]
-    private LayerMask floorObjects;
+    private Animator animationController;
+    private Vector2 currentDirection = Vector2.right;
+    /* Attack Variables */
+    private float attackRange = 5f;
+    private float attackDelay = 0.25f;
     /* PREFABS */
     [SerializeField]
     private GameObject swordCollider;
@@ -24,7 +24,8 @@ public class Player : MonoBehaviour
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
-        controller = GetComponent<Animator>();
+        animationController = GetComponent<Animator>();
+        animationController.SetBool("isHitting", false);
     }
 
     // Update is called once per frame
@@ -36,35 +37,29 @@ public class Player : MonoBehaviour
             canJump = false;
         }
        
-        if (Input.GetKey(KeyCode.Mouse0))
+        if (Input.GetKeyDown(KeyCode.Mouse0))
         {
-            controller.Play("Slash");
-            controller.SetBool("isHitting", true);
-            StartCoroutine(Slash());
+            animationController.SetTrigger("Attack");
+            StartCoroutine(Attack());
         }
 
         CalculateMovement();
     }
 
-    IEnumerator Slash()
+    IEnumerator Attack()
     {
-        swordCollider.SetActive(true);
-        float timeElapsed = 0;
-        Quaternion startRotation = swordCollider.transform.rotation;
-        Quaternion targetRotation = startRotation * Quaternion.Euler(0, 0, facingRight * 120);
-   
-        while (timeElapsed < slashDuration)
+        yield return new WaitForSeconds(attackDelay);
+        Debug.Log("Attack range: " + Vector2.one * attackRange);
+        RaycastHit2D[] enemiesHit = Physics2D.BoxCastAll(rb.position + currentDirection, Vector2.one * attackRange, 0f, Vector2.zero);
+        foreach (RaycastHit2D hit in enemiesHit)
         {
-            swordCollider.transform.rotation = Quaternion.Slerp(startRotation, targetRotation, timeElapsed / slashDuration);
-            timeElapsed += Time.deltaTime;
-            yield return null;
+            if (hit.transform.tag == "Enemy")
+            {
+                Enemy enemy = hit.transform.GetComponent<Enemy>();
+                enemy.TakeDamage();
+            }
         }
-
-        swordCollider.transform.rotation = Quaternion.Euler(0, 0, 0);
-        controller.SetBool("isHitting", false);
-        swordCollider.SetActive(false);
     }
-
 
     private void CalculateMovement()
     {
@@ -76,22 +71,21 @@ public class Player : MonoBehaviour
         if (horizontalInput > 0)
         {
             transform.localScale = new Vector3(Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
-            controller.SetBool("isMoving", true);
-            facingRight = -1;
+            animationController.SetBool("isMoving", true);
+            currentDirection = Vector2.right;
         } else if (horizontalInput < 0)
         {
             transform.localScale = new Vector3(Mathf.Abs(transform.localScale.x) * -1, transform.localScale.y, transform.localScale.z);
-            controller.SetBool("isMoving", true);
-            facingRight = 1;
+            animationController.SetBool("isMoving", true);
+            currentDirection = Vector2.left;
         } else
         {
-            controller.SetBool("isMoving", false);
+            animationController.SetBool("isMoving", false);
         }
     }
 
     public void ResetJump()
     {
-        Debug.Log("rests jmp");
         canJump = true;
     }
 

@@ -12,10 +12,8 @@ public class Feet : MonoBehaviour
     }
     void OnTriggerEnter2D(Collider2D other)
     {
-        Debug.Log("triggering feet");
         if (other.tag == "Floor")
         {
-            Debug.Log("triggering feet inside if statment");
             player.ResetJump();
         }
     }
