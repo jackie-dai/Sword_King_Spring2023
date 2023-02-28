@@ -258,7 +258,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {x: 0, y: 0}
-  speed: 10
+  speed: 2
   startedMovement: 0
 --- !u!1001 &388132341
 PrefabInstance:
