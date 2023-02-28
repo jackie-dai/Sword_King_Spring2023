@@ -42,7 +42,7 @@ public class Player : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space) && canJump)
         {
             rb.velocity = Vector2.up * jumpVelocity;
-            canJump = false;
+            //canJump = false;
         }
        
         if (Input.GetKeyDown(KeyCode.Mouse0))
