@@ -16,7 +16,7 @@ public class Player : MonoBehaviour
     private GameObject swordCollider;
     /* EDITABLE VARIABLES */
     [SerializeField]
-    public float jumpVelocity = 5f;
+    public float jumpVelocity = 400f;
     [SerializeField]
     public float movementSpeed = 5f;
     private float slashDuration = 0.3f;
@@ -41,7 +41,7 @@ public class Player : MonoBehaviour
         //Handles jump
         if (Input.GetKeyDown(KeyCode.Space) && canJump)
         {
-            rb.velocity = Vector2.up * jumpVelocity;
+            rb.AddForce(new Vector2(0f, jumpVelocity));
             //canJump = false;
         }
        

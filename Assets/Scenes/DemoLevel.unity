@@ -687,9 +687,17 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5739808602591481243, guid: cb2bdfc0ae626bb4586a52e05a2415a4, type: 3}
+      propertyPath: m_GravityScale
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 5739808602591481253, guid: cb2bdfc0ae626bb4586a52e05a2415a4, type: 3}
       propertyPath: health
       value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 5739808602591481253, guid: cb2bdfc0ae626bb4586a52e05a2415a4, type: 3}
+      propertyPath: jumpVelocity
+      value: 550
       objectReference: {fileID: 0}
     - target: {fileID: 5739808602591481253, guid: cb2bdfc0ae626bb4586a52e05a2415a4, type: 3}
       propertyPath: swordCollider
@@ -699,7 +707,8 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 5739808602591481240, guid: cb2bdfc0ae626bb4586a52e05a2415a4, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: cb2bdfc0ae626bb4586a52e05a2415a4, type: 3}
 --- !u!114 &1197096336 stripped
 MonoBehaviour:
