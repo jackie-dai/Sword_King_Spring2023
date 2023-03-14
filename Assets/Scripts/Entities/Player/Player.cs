@@ -28,11 +28,14 @@ public class Player : MonoBehaviour
     [SerializeField]
     public int gold = 0;
     public Sword[] swords;
-    public Item[] items;
+    public Item[] items = new Item[5];
     private int swordInt = 1;
     private int itemInt = 0;
     [SerializeField]
     private int health = 0;
+    [SerializeField]
+    private bool inMarket = false;
+    public MarketScript currMarket;
 
     void Awake()
     {
@@ -57,6 +60,14 @@ public class Player : MonoBehaviour
         {
             animationController.SetTrigger("Attack");
             StartCoroutine(Slash());
+        }
+        if (Input.GetKeyDown(KeyCode.B) && currMarket != null)
+        {
+            currMarket.buy(this);
+        }
+        if (Input.GetKeyDown(KeyCode.S) && currMarket != null)
+        {
+            currMarket.sell(this);
         }
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
@@ -144,12 +155,24 @@ public class Player : MonoBehaviour
 
     public void addItem(Item newItem)
     {
+        newItem.player = this;
         items[itemInt] = newItem;
         itemInt += 1;
         if (itemInt > items.Length - 1)
         {
             itemInt = 0;
         }
+    }
+
+    public void removeItem(Item oldItem)
+    {
+        int index = System.Array.IndexOf(items, oldItem);
+        items[index] = null;
+        for (int i = index; i < items.Length - 1; i++)
+        {
+            items[i] = items[i + 1];
+        }
+        itemInt -= 1;
     }
 
     public void useItem(int itemIndex)
@@ -188,6 +211,25 @@ public class Player : MonoBehaviour
         {
             Debug.Log("killed");
             Destroy(this.gameObject);
+        }
+        if (other.transform.tag == "Market")
+        {
+            Debug.Log("Collided with Market");
+            currMarket = other.transform.gameObject.GetComponent<MarketScript>();
+            inMarket = true;
+            
+        }
+    }
+
+    void OnCollisionExit2D(Collision2D collision)
+    {
+        if (collision.transform.tag == "Market")
+        {
+            if (inMarket == true)
+            {
+                currMarket = null;
+                inMarket = false;
+            }
         }
     }
 }

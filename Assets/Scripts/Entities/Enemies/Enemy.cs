@@ -57,9 +57,9 @@ public class Enemy : MonoBehaviour
             strafeAmount *= -1;
         }
     }
-    
-    /* Reduces health and flashes white -> red on hit */
-    public void TakeDamage(int amount)
+
+        /* Reduces health and flashes white -> red on hit */
+        public void TakeDamage(int amount)
     {
         _lives -= amount;
         //Debug.Log("Hit");

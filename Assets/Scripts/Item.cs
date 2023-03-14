@@ -20,10 +20,10 @@ public class Item : MonoBehaviour
 
     public void useAbility()
     {
-        if (name == "goldPotion")
+        if (name == "Health Potion")
         {
             //Add health
-            player.gold += 1;
+            player.takeDamage(-2);
         }
     }
 }
