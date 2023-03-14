@@ -21,9 +21,12 @@ public class Feet : MonoBehaviour
 
     void OnCollisionExit2D(Collision2D collision)
     {
-        if (player.canJump == true) // this triggers only if the player is not touching the ground anymore
+        if (collision.transform.tag == "Floor")
         {
-            player.canJump = false;
+            if (player.canJump == true) // this triggers only if the player is not touching the ground anymore
+            {
+                player.canJump = false;
+            }
         }
     }
 
