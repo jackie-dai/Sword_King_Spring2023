@@ -7,7 +7,7 @@ public class Player : MonoBehaviour
     private Rigidbody2D rb;
     public bool canJump = true;
     private Animator animationController;
-    private Vector2 currentDirection = Vector2.right;
+    private float currentDirection = 1;
     /* Attack Variables */
     private float attackRange = 5f;
     private float attackDelay = 0.25f;
@@ -15,8 +15,13 @@ public class Player : MonoBehaviour
     [SerializeField]
     private GameObject swordCollider;
     /* EDITABLE VARIABLES */
+    #region Dash 
+    private float dashVelocity = 400f;
+    private float dashCooldown = 5f;
+    private bool canDash = true;
+    #endregion
     [SerializeField]
-    public float jumpVelocity = 5f;
+    public float jumpVelocity = 400f;
     [SerializeField]
     public float movementSpeed = 5f;
     private float slashDuration = 0.3f;
@@ -41,10 +46,13 @@ public class Player : MonoBehaviour
         //Handles jump
         if (Input.GetKeyDown(KeyCode.Space) && canJump)
         {
-            rb.velocity = Vector2.up * jumpVelocity;
+            rb.AddForce(new Vector2(0f, jumpVelocity));
             //canJump = false;
         }
-       
+       if (Input.GetKeyDown(KeyCode.LeftShift) && canDash)
+        {
+            Dash();
+        }
         if (Input.GetKeyDown(KeyCode.Mouse0))
         {
             animationController.SetTrigger("Attack");
@@ -78,7 +86,7 @@ public class Player : MonoBehaviour
     {
         yield return new WaitForSeconds(attackDelay);
         Debug.Log("Attack range: " + Vector2.one * attackRange);
-        RaycastHit2D[] enemiesHit = Physics2D.BoxCastAll(rb.position + currentDirection, Vector2.one * attackRange, 0f, Vector2.zero);
+        RaycastHit2D[] enemiesHit = Physics2D.BoxCastAll(rb.position + new Vector2(currentDirection, 0f), Vector2.one * attackRange, 0f, Vector2.zero);
         foreach (RaycastHit2D hit in enemiesHit)
         {
             if (hit.transform.tag == "Enemy")
@@ -100,18 +108,30 @@ public class Player : MonoBehaviour
         {
             transform.localScale = new Vector3(Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
             animationController.SetBool("isMoving", true);
-            currentDirection = Vector2.right;
+            currentDirection = 1;
         } else if (horizontalInput < 0)
         {
             transform.localScale = new Vector3(Mathf.Abs(transform.localScale.x) * -1, transform.localScale.y, transform.localScale.z);
             animationController.SetBool("isMoving", true);
-            currentDirection = Vector2.left;
+            currentDirection = -1;
         } else
         {
             animationController.SetBool("isMoving", false);
         }
     }
 
+    void Dash()
+    {
+        rb.AddForce(new Vector2(dashVelocity * currentDirection, 0f));
+        canDash = false;
+        StartCoroutine(DashCooldown());
+    }
+
+    IEnumerator DashCooldown()
+    {
+        yield return new WaitForSeconds(dashCooldown);
+        canDash = true;
+    }
     public void addSword(Sword newSword)
     {
         swords[swordInt] = newSword;
