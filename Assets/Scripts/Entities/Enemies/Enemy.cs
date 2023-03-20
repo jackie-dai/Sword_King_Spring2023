@@ -14,10 +14,9 @@ public class Enemy : MonoBehaviour
     [SerializeField]
     private float strafeDuration = 1f;
     [SerializeField]
-    private Player player;
-    [SerializeField]
     private Animator animationControl;
-
+    [SerializeField]
+    private Player player;
     private void Awake()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
@@ -33,7 +32,7 @@ public class Enemy : MonoBehaviour
         if (other.tag == "Player")
         {
             Debug.Log("Taking damage");
-            player.takeDamage(1);
+            player.GetComponent<Player>().takeDamage(1);
         }
     }
 

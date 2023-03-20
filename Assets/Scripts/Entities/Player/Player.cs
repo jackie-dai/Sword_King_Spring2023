@@ -8,6 +8,7 @@ public class Player : MonoBehaviour
     public bool canJump = true;
     private Animator animationController;
     private float currentDirection = 1;
+    private SpriteRenderer sp;
     /* Attack Variables */
     private float attackRange = 5f;
     private float attackDelay = 0.25f;
@@ -19,6 +20,10 @@ public class Player : MonoBehaviour
     private float dashVelocity = 400f;
     private float dashCooldown = 5f;
     private bool canDash = true;
+    #endregion
+    #region Health
+    [SerializeField]
+    private int health = 3;
     #endregion
     [SerializeField]
     public float jumpVelocity = 400f;
@@ -32,8 +37,6 @@ public class Player : MonoBehaviour
     private int swordInt = 1;
     private int itemInt = 0;
     [SerializeField]
-    private int health = 0;
-    [SerializeField]
     private bool inMarket = false;
     public MarketScript currMarket;
 
@@ -41,6 +44,7 @@ public class Player : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         animationController = GetComponent<Animator>();
+        sp = GetComponent<SpriteRenderer>();
     }
 
     // Update is called once per frame
@@ -194,10 +198,18 @@ public class Player : MonoBehaviour
     public void takeDamage(int amount)
     {
         health -= amount;
+        StartCoroutine(PlayDamageIndicator());
         if (health < 0)
         {
             Destroy(this.gameObject);
         }
+    }
+
+    IEnumerator PlayDamageIndicator()
+    {
+        sp.color = Color.grey;
+        yield return new WaitForSeconds(0.25f);
+        sp.color = Color.white;
     }
 
     public void ResetJump()
