@@ -14,10 +14,9 @@ public class Enemy : MonoBehaviour
     [SerializeField]
     private float strafeDuration = 1f;
     [SerializeField]
-    private Player player;
-    [SerializeField]
     private Animator animationControl;
-
+    [SerializeField]
+    private Player player;
     private void Awake()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
@@ -25,6 +24,16 @@ public class Enemy : MonoBehaviour
     private void Start()
     {
         StartCoroutine(Strafe());
+    }
+
+    public void OnTriggerEnter2D(Collider2D other)
+    {
+        Debug.Log(other.tag);
+        if (other.tag == "Player")
+        {
+            Debug.Log("Taking damage");
+            player.GetComponent<Player>().takeDamage(1);
+        }
     }
 
     /* Moves object left and right by offset strafeAmount */
@@ -47,9 +56,9 @@ public class Enemy : MonoBehaviour
             strafeAmount *= -1;
         }
     }
-    
-    /* Reduces health and flashes white -> red on hit */
-    public void TakeDamage(int amount)
+
+        /* Reduces health and flashes white -> red on hit */
+        public void TakeDamage(int amount)
     {
         _lives -= amount;
         //Debug.Log("Hit");

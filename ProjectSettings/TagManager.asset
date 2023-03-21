@@ -8,6 +8,7 @@ TagManager:
   - Floor
   - Enemy
   - Wall
+  - Market
   layers:
   - Default
   - TransparentFX

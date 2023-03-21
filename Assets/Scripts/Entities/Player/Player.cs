@@ -7,7 +7,8 @@ public class Player : MonoBehaviour
     private Rigidbody2D rb;
     public bool canJump = true;
     private Animator animationController;
-    private Vector2 currentDirection = Vector2.right;
+    private float currentDirection = 1;
+    private SpriteRenderer sp;
     /* Attack Variables */
     private float attackRange = 5f;
     private float attackDelay = 0.25f;
@@ -15,22 +16,35 @@ public class Player : MonoBehaviour
     [SerializeField]
     private GameObject swordCollider;
     /* EDITABLE VARIABLES */
+    #region Dash 
+    private float dashVelocity = 400f;
+    private float dashCooldown = 5f;
+    private bool canDash = true;
+    #endregion
+    #region Health
     [SerializeField]
-    public float jumpVelocity = 5f;
+    private int health = 3;
+    #endregion
+    [SerializeField]
+    public float jumpVelocity = 400f;
     [SerializeField]
     public float movementSpeed = 5f;
     private float slashDuration = 0.3f;
     [SerializeField]
     public int gold = 0;
     public Sword[] swords;
-    public Item[] items;
+    public Item[] items = new Item[5];
     private int swordInt = 1;
     private int itemInt = 0;
+    [SerializeField]
+    private bool inMarket = false;
+    public MarketScript currMarket;
 
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         animationController = GetComponent<Animator>();
+        sp = GetComponent<SpriteRenderer>();
     }
 
     // Update is called once per frame
@@ -39,14 +53,25 @@ public class Player : MonoBehaviour
         //Handles jump
         if (Input.GetKeyDown(KeyCode.Space) && canJump)
         {
-            rb.velocity = Vector2.up * jumpVelocity;
-            canJump = false;
+            rb.AddForce(new Vector2(0f, jumpVelocity));
+            //canJump = false;
         }
-       
-        if (Input.GetKey(KeyCode.Mouse0))
+       if (Input.GetKeyDown(KeyCode.LeftShift) && canDash)
+        {
+            Dash();
+        }
+        if (Input.GetKeyDown(KeyCode.Mouse0))
         {
             animationController.SetTrigger("Attack");
             StartCoroutine(Slash());
+        }
+        if (Input.GetKeyDown(KeyCode.B) && currMarket != null)
+        {
+            currMarket.buy(this);
+        }
+        if (Input.GetKeyDown(KeyCode.S) && currMarket != null)
+        {
+            currMarket.sell(this);
         }
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
@@ -76,7 +101,7 @@ public class Player : MonoBehaviour
     {
         yield return new WaitForSeconds(attackDelay);
         Debug.Log("Attack range: " + Vector2.one * attackRange);
-        RaycastHit2D[] enemiesHit = Physics2D.BoxCastAll(rb.position + currentDirection, Vector2.one * attackRange, 0f, Vector2.zero);
+        RaycastHit2D[] enemiesHit = Physics2D.BoxCastAll(rb.position + new Vector2(currentDirection, 0f), Vector2.one * attackRange, 0f, Vector2.zero);
         foreach (RaycastHit2D hit in enemiesHit)
         {
             if (hit.transform.tag == "Enemy")
@@ -98,18 +123,30 @@ public class Player : MonoBehaviour
         {
             transform.localScale = new Vector3(Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
             animationController.SetBool("isMoving", true);
-            currentDirection = Vector2.right;
+            currentDirection = 1;
         } else if (horizontalInput < 0)
         {
             transform.localScale = new Vector3(Mathf.Abs(transform.localScale.x) * -1, transform.localScale.y, transform.localScale.z);
             animationController.SetBool("isMoving", true);
-            currentDirection = Vector2.left;
+            currentDirection = -1;
         } else
         {
             animationController.SetBool("isMoving", false);
         }
     }
 
+    void Dash()
+    {
+        rb.AddForce(new Vector2(dashVelocity * currentDirection, 0f));
+        canDash = false;
+        StartCoroutine(DashCooldown());
+    }
+
+    IEnumerator DashCooldown()
+    {
+        yield return new WaitForSeconds(dashCooldown);
+        canDash = true;
+    }
     public void addSword(Sword newSword)
     {
         swords[swordInt] = newSword;
@@ -122,12 +159,24 @@ public class Player : MonoBehaviour
 
     public void addItem(Item newItem)
     {
+        newItem.player = this;
         items[itemInt] = newItem;
         itemInt += 1;
         if (itemInt > items.Length - 1)
         {
             itemInt = 0;
         }
+    }
+
+    public void removeItem(Item oldItem)
+    {
+        int index = System.Array.IndexOf(items, oldItem);
+        items[index] = null;
+        for (int i = index; i < items.Length - 1; i++)
+        {
+            items[i] = items[i + 1];
+        }
+        itemInt -= 1;
     }
 
     public void useItem(int itemIndex)
@@ -146,6 +195,23 @@ public class Player : MonoBehaviour
         }
     }
 
+    public void takeDamage(int amount)
+    {
+        health -= amount;
+        StartCoroutine(PlayDamageIndicator());
+        if (health < 0)
+        {
+            Destroy(this.gameObject);
+        }
+    }
+
+    IEnumerator PlayDamageIndicator()
+    {
+        sp.color = Color.grey;
+        yield return new WaitForSeconds(0.25f);
+        sp.color = Color.white;
+    }
+
     public void ResetJump()
     {
         canJump = true;
@@ -157,6 +223,25 @@ public class Player : MonoBehaviour
         {
             Debug.Log("killed");
             Destroy(this.gameObject);
+        }
+        if (other.transform.tag == "Market")
+        {
+            Debug.Log("Collided with Market");
+            currMarket = other.transform.gameObject.GetComponent<MarketScript>();
+            inMarket = true;
+            
+        }
+    }
+
+    void OnCollisionExit2D(Collision2D collision)
+    {
+        if (collision.transform.tag == "Market")
+        {
+            if (inMarket == true)
+            {
+                currMarket = null;
+                inMarket = false;
+            }
         }
     }
 }

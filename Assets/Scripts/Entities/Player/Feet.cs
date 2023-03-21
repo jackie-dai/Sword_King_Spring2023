@@ -10,6 +10,7 @@ public class Feet : MonoBehaviour
     {
         player = GetComponentInParent<Player>();
     }
+
     void OnTriggerEnter2D(Collider2D other)
     {
         if (other.tag == "Floor")
@@ -17,4 +18,17 @@ public class Feet : MonoBehaviour
             player.ResetJump();
         }
     }
+
+    void OnCollisionExit2D(Collision2D collision)
+    {
+        if (collision.transform.tag == "Floor")
+        {
+            if (player.canJump == true) // this triggers only if the player is not touching the ground anymore
+            {
+                player.canJump = false;
+            }
+        }
+    }
+
 }
+
