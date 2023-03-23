@@ -13,8 +13,6 @@ public class Player : MonoBehaviour
     private float attackRange = 5f;
     private float attackDelay = 0.25f;
     /* PREFABS */
-    [SerializeField]
-    private GameObject swordCollider;
     /* EDITABLE VARIABLES */
     #region Dash 
     private float dashVelocity = 400f;

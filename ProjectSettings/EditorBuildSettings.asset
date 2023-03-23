@@ -14,4 +14,13 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Levels/Level2.unity
     guid: 2c191efe3ed360a4b9ca0154274fe046
+  - enabled: 1
+    path: Assets/Scenes/DemoLevel.unity
+    guid: 0a9f9ef48e5e00d4084f36fcacd6446f
+  - enabled: 1
+    path: Assets/Scenes/navi/navis_level.unity
+    guid: 20aa1dea7730343d2b421a7e89a8eb35
+  - enabled: 1
+    path: Assets/Scenes/HardScene.unity
+    guid: 1905a1837b3d67a4484d6d6df7c01070
   m_configObjects: {}
