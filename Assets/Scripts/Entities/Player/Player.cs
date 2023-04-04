@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Player : MonoBehaviour
 {
@@ -38,6 +39,7 @@ public class Player : MonoBehaviour
     private bool inMarket = false;
     public MarketScript currMarket;
     public Portal portal;
+    public Text player_text;
 
     void Awake()
     {
@@ -196,6 +198,7 @@ public class Player : MonoBehaviour
             }
             itemInt -= 1;
         }
+        player_text.text = displayItems();
     }
 
     public void takeDamage(int amount)
@@ -232,7 +235,9 @@ public class Player : MonoBehaviour
             Debug.Log("Collided with Market");
             currMarket = other.transform.gameObject.GetComponent<MarketScript>();
             inMarket = true;
-            
+            player_text.text = ("Press B to Buy, S to Sell. Items sold: "+currMarket.info()+" "+displayItems());
+
+
         }
     }
 
@@ -244,7 +249,22 @@ public class Player : MonoBehaviour
             {
                 currMarket = null;
                 inMarket = false;
+                player_text.text = displayItems();
             }
         }
+    }
+
+    string displayItems()
+    {
+        string totalString = "Inventory: ";
+        foreach (Item item in items)
+        {
+            if (item != null)
+            {
+                totalString = totalString + item.name + ", ";
+            }
+        }
+        //Debug.Log(totalString);
+        return totalString;
     }
 }
