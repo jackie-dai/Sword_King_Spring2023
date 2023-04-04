@@ -37,6 +37,7 @@ public class Player : MonoBehaviour
     [SerializeField]
     private bool inMarket = false;
     public MarketScript currMarket;
+    public Portal portal;
 
     void Awake()
     {
@@ -90,6 +91,10 @@ public class Player : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Alpha5))
         {
             useItem(4);
+        }
+        if (this.gameObject.transform.position.y < -20.0f)
+        {
+            portal.reload();
         }
 
         CalculateMovement();

@@ -1718,6 +1718,10 @@ PrefabInstance:
       propertyPath: player
       value: 
       objectReference: {fileID: 1197096336}
+    - target: {fileID: 861374765, guid: 6f2ed48dddc8b47b6b5681b459279666, type: 3}
+      propertyPath: player
+      value: 
+      objectReference: {fileID: 238685684}
     - target: {fileID: 2457708774447368294, guid: 6f2ed48dddc8b47b6b5681b459279666, type: 3}
       propertyPath: m_RootOrder
       value: 12
@@ -1766,7 +1770,8 @@ PrefabInstance:
       propertyPath: m_Name
       value: Spiked Slime
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 861374765, guid: 6f2ed48dddc8b47b6b5681b459279666, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 6f2ed48dddc8b47b6b5681b459279666, type: 3}
 --- !u!1001 &2134259865
 PrefabInstance:
