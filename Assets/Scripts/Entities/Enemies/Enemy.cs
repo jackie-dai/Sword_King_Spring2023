@@ -23,12 +23,15 @@ public class Enemy : MonoBehaviour
     }
     private void Start()
     {
-        StartCoroutine(Strafe());
+        if (this.gameObject.name != "Mouse")
+        {
+            StartCoroutine(Strafe());
+        }
     }
 
     public void OnTriggerEnter2D(Collider2D other)
     {
-        Debug.Log(other.tag);
+        //Debug.Log(other.tag);
         if (other.tag == "Player")
         {
             Debug.Log("Taking damage");
