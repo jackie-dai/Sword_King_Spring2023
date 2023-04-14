@@ -35,4 +35,8 @@ public class Portal : MonoBehaviour
             Start();
         }
     }
+    public void reload()
+    {
+        SceneManager.LoadScene(currentScene.name);
+    }
 }

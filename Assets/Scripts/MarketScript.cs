@@ -31,4 +31,9 @@ public class MarketScript : MonoBehaviour
         player.removeItem(itemProvided);
         player.gold += cost;
     }
+
+    public string info()
+    {
+        return itemProvided.name + ": $" + cost;
+    }
 }
