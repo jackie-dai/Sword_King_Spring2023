@@ -26,15 +26,51 @@ public class GreenFlameBozz : MonoBehaviour
         StartCoroutine(Strafe());
     }
 
+    public GameObject bulletPrefab;
+    public float shootSpeed = 300;
+
+    private bool playerInRange = false;
+    private float lastAttackTime = 0f;
+    private float fireRate = 0.5f;
+
     public void OnTriggerEnter2D(Collider2D other)
     {
         Debug.Log(other.tag);
         if (other.tag == "Player")
         {
+            playerInRange = true;
             Debug.Log("Taking damage");
             player.GetComponent<Player>().takeDamage(1);
         }
     }
+
+    public void OnTriggerExit2D(Collider2D other)
+    {
+        if (other.tag == "player")
+        {
+            playerInRange = false;
+        }
+    }
+
+    void Update()
+    {
+        if (playerInRange)
+        {
+            if (Time.time - lastAttackTime >= 1f / fireRate)
+            {
+                Debug.Log("Shooting");
+                ShootBullet();
+                lastAttackTime = Time.time;
+            }
+        }
+    }
+
+    void ShootBullet()
+    {
+        var projectile = Instantiate(bulletPrefab, transform.position, transform.rotation);
+        projectile.GetComponent<Rigidbody>().velocity = transform.forward * shootSpeed;
+    }
+
 
     /* Moves object left and right by offset strafeAmount */
     IEnumerator Strafe()
