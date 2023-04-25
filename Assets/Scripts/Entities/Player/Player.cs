@@ -22,7 +22,9 @@ public class Player : MonoBehaviour
     #endregion
     #region Health
     [SerializeField]
-    private int health = 3;
+    public float maxhp = 10;
+    public static float health = 10;
+
     #endregion
     [SerializeField]
     public float jumpVelocity = 400f;
@@ -46,6 +48,7 @@ public class Player : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         animationController = GetComponent<Animator>();
         sp = GetComponent<SpriteRenderer>();
+        maxhp = 10;
     }
 
     // Update is called once per frame
