@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Player : MonoBehaviour
 {
@@ -13,8 +14,6 @@ public class Player : MonoBehaviour
     private float attackRange = 5f;
     private float attackDelay = 0.25f;
     /* PREFABS */
-    [SerializeField]
-    private GameObject swordCollider;
     /* EDITABLE VARIABLES */
     #region Dash 
     private float dashVelocity = 400f;
@@ -23,7 +22,9 @@ public class Player : MonoBehaviour
     #endregion
     #region Health
     [SerializeField]
-    private int health = 3;
+    public float maxhp = 10;
+    public static float health = 10;
+
     #endregion
     [SerializeField]
     public float jumpVelocity = 400f;
@@ -39,12 +40,15 @@ public class Player : MonoBehaviour
     [SerializeField]
     private bool inMarket = false;
     public MarketScript currMarket;
+    public Portal portal;
+    public Text player_text;
 
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         animationController = GetComponent<Animator>();
         sp = GetComponent<SpriteRenderer>();
+        maxhp = 10;
     }
 
     // Update is called once per frame
@@ -92,6 +96,10 @@ public class Player : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Alpha5))
         {
             useItem(4);
+        }
+        if (this.gameObject.transform.position.y < -20.0f)
+        {
+            portal.reload();
         }
 
         CalculateMovement();
@@ -193,6 +201,7 @@ public class Player : MonoBehaviour
             }
             itemInt -= 1;
         }
+        player_text.text = displayItems();
     }
 
     public void takeDamage(int amount)
@@ -229,7 +238,9 @@ public class Player : MonoBehaviour
             Debug.Log("Collided with Market");
             currMarket = other.transform.gameObject.GetComponent<MarketScript>();
             inMarket = true;
-            
+            player_text.text = ("Press B to Buy, S to Sell. Items sold: "+currMarket.info()+" "+displayItems());
+
+
         }
     }
 
@@ -241,7 +252,22 @@ public class Player : MonoBehaviour
             {
                 currMarket = null;
                 inMarket = false;
+                player_text.text = displayItems();
             }
         }
+    }
+
+    string displayItems()
+    {
+        string totalString = "Inventory: ";
+        foreach (Item item in items)
+        {
+            if (item != null)
+            {
+                totalString = totalString + item.name + ", ";
+            }
+        }
+        //Debug.Log(totalString);
+        return totalString;
     }
 }
