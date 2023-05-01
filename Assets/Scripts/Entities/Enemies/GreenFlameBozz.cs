@@ -27,18 +27,27 @@ public class GreenFlameBozz : MonoBehaviour
     }
 
     public GameObject bulletPrefab;
-    public float shootSpeed = 300;
+    public float shootSpeed = 1.0f;
 
     private bool playerInRange = false;
     private float lastAttackTime = 0f;
     private float fireRate = 0.5f;
 
-    public void OnTriggerEnter2D(Collider2D other)
+    /*public void OnTriggerEnter2D(Collider2D other)
     {
         Debug.Log(other.tag);
         if (other.tag == "Player")
         {
             playerInRange = true;
+            Debug.Log("Taking damage");
+            player.GetComponent<Player>().takeDamage(1);
+        }
+    }*/
+
+    public void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.transform.tag == "Player")
+        {
             Debug.Log("Taking damage");
             player.GetComponent<Player>().takeDamage(1);
         }
@@ -54,7 +63,7 @@ public class GreenFlameBozz : MonoBehaviour
 
     void Update()
     {
-        if (playerInRange)
+        if (true)
         {
             if (Time.time - lastAttackTime >= 1f / fireRate)
             {
@@ -67,8 +76,15 @@ public class GreenFlameBozz : MonoBehaviour
 
     void ShootBullet()
     {
-        var projectile = Instantiate(bulletPrefab, transform.position, transform.rotation);
-        projectile.GetComponent<Rigidbody>().velocity = transform.forward * shootSpeed;
+        Vector3 startPos = transform.position;
+        startPos.x -= 4.0f;
+        GameObject projectile = Instantiate(bulletPrefab, startPos, new Quaternion(0.0f, 0.0f, 0.0f, 0.0f));
+        //projectile.transform.LookAt(player.transform);
+        float am = player.transform.position.x - projectile.transform.position.x;
+        float am2 = player.transform.position.y - projectile.transform.position.y - 2.0f;
+        Vector2 movDir = new Vector2(am, am2);
+        projectile.GetComponent<Rigidbody2D>().velocity += movDir * shootSpeed * Time.deltaTime; //transform.forward * shootSpeed;
+        //projectile.transform.Translate(transform.forward * shootSpeed);
     }
 
 
@@ -101,7 +117,7 @@ public class GreenFlameBozz : MonoBehaviour
         StartCoroutine(Flash());
         if (_lives < 1)
         {
-            player.gold += 1;
+            player.setGold(-10);
             Destroy(this.gameObject);
         }
     }

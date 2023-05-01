@@ -29,10 +29,9 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    public void OnTriggerEnter2D(Collider2D other)
+    public void OnCollisionEnter2D(Collision2D collision)
     {
-        //Debug.Log(other.tag);
-        if (other.tag == "Player")
+        if (collision.transform.tag == "Player")
         {
             Debug.Log("Taking damage");
             player.GetComponent<Player>().takeDamage(1);
@@ -68,7 +67,8 @@ public class Enemy : MonoBehaviour
         StartCoroutine(Flash());
         if (_lives < 1)
         {
-            player.gold += 1;
+            player.setGold(-1);
+            player.displayItems();
             Destroy(this.gameObject);
         }
     }

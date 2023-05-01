@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,6 +7,7 @@ using UnityEngine.UI;
 public class Player : MonoBehaviour
 {
     private Rigidbody2D rb;
+    [SerializeField]
     public bool canJump = true;
     private Animator animationController;
     private float currentDirection = 1;
@@ -23,7 +25,9 @@ public class Player : MonoBehaviour
     #region Health
     [SerializeField]
     public float maxhp = 10;
+    [SerializeField]
     public static float health = 10;
+    public int damageAm = 1;
 
     #endregion
     [SerializeField]
@@ -32,11 +36,12 @@ public class Player : MonoBehaviour
     public float movementSpeed = 5f;
     private float slashDuration = 0.3f;
     [SerializeField]
-    public int gold = 0;
+    public static int gold = 1;
     public Sword[] swords;
-    public Item[] items = new Item[5];
-    private int swordInt = 1;
-    private int itemInt = 0;
+    [SerializeField]
+    public static Item[] items = new Item[3];
+    private static int swordInt = 1;
+    private static int itemInt = 0;
     [SerializeField]
     private bool inMarket = false;
     public MarketScript currMarket;
@@ -49,6 +54,7 @@ public class Player : MonoBehaviour
         animationController = GetComponent<Animator>();
         sp = GetComponent<SpriteRenderer>();
         maxhp = 10;
+        displayItems();
     }
 
     // Update is called once per frame
@@ -60,7 +66,7 @@ public class Player : MonoBehaviour
             rb.AddForce(new Vector2(0f, jumpVelocity));
             //canJump = false;
         }
-       if (Input.GetKeyDown(KeyCode.LeftShift) && canDash)
+        if (Input.GetKeyDown(KeyCode.LeftShift) && canDash)
         {
             Dash();
         }
@@ -72,10 +78,12 @@ public class Player : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.B) && currMarket != null)
         {
             currMarket.buy(this);
+            displayItems();
         }
         if (Input.GetKeyDown(KeyCode.S) && currMarket != null)
         {
             currMarket.sell(this);
+            displayItems();
         }
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
@@ -97,8 +105,9 @@ public class Player : MonoBehaviour
         {
             useItem(4);
         }
-        if (this.gameObject.transform.position.y < -20.0f)
+        if (this.gameObject.transform.position.y < -50.0f)
         {
+            health = 10.0f;
             portal.reload();
         }
 
@@ -114,10 +123,28 @@ public class Player : MonoBehaviour
         {
             if (hit.transform.tag == "Enemy")
             {
-                Enemy enemy = hit.transform.GetComponent<Enemy>();
-                enemy.TakeDamage(1);
+                if (hit.transform.GetComponent<Enemy>() == null)
+                {
+                    GreenFlameBozz enemy = hit.transform.GetComponent<GreenFlameBozz>();
+                    enemy.TakeDamage(damageAm);
+                } else
+                {
+                    Enemy enemy = hit.transform.GetComponent<Enemy>();
+                    enemy.TakeDamage(damageAm);
+                }
+                
             }
         }
+    }
+
+    public int getGold()
+    {
+        return gold;
+    }
+
+    public void setGold(int am)
+    {
+        gold -= am;
     }
 
     private void CalculateMovement()
@@ -132,12 +159,14 @@ public class Player : MonoBehaviour
             transform.localScale = new Vector3(Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
             animationController.SetBool("isMoving", true);
             currentDirection = 1;
-        } else if (horizontalInput < 0)
+        }
+        else if (horizontalInput < 0)
         {
             transform.localScale = new Vector3(Mathf.Abs(transform.localScale.x) * -1, transform.localScale.y, transform.localScale.z);
             animationController.SetBool("isMoving", true);
             currentDirection = -1;
-        } else
+        }
+        else
         {
             animationController.SetBool("isMoving", false);
         }
@@ -155,6 +184,7 @@ public class Player : MonoBehaviour
         yield return new WaitForSeconds(dashCooldown);
         canDash = true;
     }
+
     public void addSword(Sword newSword)
     {
         swords[swordInt] = newSword;
@@ -162,12 +192,12 @@ public class Player : MonoBehaviour
         if (swordInt > swords.Length - 1)
         {
             swordInt = 0;
-        } 
+        }
     }
 
     public void addItem(Item newItem)
     {
-        newItem.player = this;
+        newItem.setPlayer(this);
         items[itemInt] = newItem;
         itemInt += 1;
         if (itemInt > items.Length - 1)
@@ -201,7 +231,7 @@ public class Player : MonoBehaviour
             }
             itemInt -= 1;
         }
-        player_text.text = displayItems();
+        displayItems();
     }
 
     public void takeDamage(int amount)
@@ -210,7 +240,9 @@ public class Player : MonoBehaviour
         StartCoroutine(PlayDamageIndicator());
         if (health < 0)
         {
-            Destroy(this.gameObject);
+            health = 10.0f;
+            portal.reload();
+            //Destroy(this.gameObject);
         }
     }
 
@@ -227,18 +259,23 @@ public class Player : MonoBehaviour
     }
 
     private void OnCollisionEnter2D(Collision2D other)
-    {   
+    {
         if (other.transform.tag == "Spikes")
         {
             Debug.Log("killed");
+            portal.reload();
             Destroy(this.gameObject);
+        }
+        if (other.transform.tag == "Bullet")
+        {
+            takeDamage(2);
         }
         if (other.transform.tag == "Market")
         {
             Debug.Log("Collided with Market");
             currMarket = other.transform.gameObject.GetComponent<MarketScript>();
             inMarket = true;
-            player_text.text = ("Press B to Buy, S to Sell. Items sold: "+currMarket.info()+" "+displayItems());
+            player_text.text = ("Press B to Buy, S to Sell. Items sold: " + currMarket.info() + " " + displayItems());
 
 
         }
@@ -257,17 +294,53 @@ public class Player : MonoBehaviour
         }
     }
 
-    string displayItems()
+    public string displayItems()
     {
-        string totalString = "Inventory: ";
+        string totalString = "Money: " + gold + " Inventory: ";
+        int index = 1;
         foreach (Item item in items)
         {
             if (item != null)
             {
-                totalString = totalString + item.name + ", ";
+                totalString = totalString + index + ":" + item.name + ", ";
             }
+            index += 1;
+        }
+        if (player_text != null)
+        {
+            player_text.text = totalString;
         }
         //Debug.Log(totalString);
         return totalString;
+
+    }
+
+    public void WaitEffect(float time, Item effectItem)
+    {
+        //Debug.Log("In wait effect");
+        damageAm += 1;
+        StartCoroutine(waitEffectCor(time, effectItem.name));
+    }
+
+    public IEnumerator waitEffectCor(float time, string name)
+    {
+        yield return new WaitForSeconds(time);
+        endEffect(name);
+    }
+
+    public void endEffect(string itemName)
+    {
+        if (itemName == "Damage Potion")
+        {
+            damageAm = 1;
+        }
+        else if (itemName == "Speed Potion")
+        {
+            movementSpeed = 7f;
+        }
+        else if (itemName == "Jump Potion")
+        {
+            jumpVelocity = 400f;
+        }
     }
 }

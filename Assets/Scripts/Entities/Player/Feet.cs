@@ -11,9 +11,10 @@ public class Feet : MonoBehaviour
         player = GetComponentInParent<Player>();
     }
 
-    void OnTriggerEnter2D(Collider2D other)
+    void OnCollisionEnter2D(Collision2D collision)
     {
-        if (other.tag == "Floor")
+       
+        if (collision.transform.tag == "Wall" || collision.transform.tag == "Market" || collision.transform.tag == "Floor")
         {
             player.ResetJump();
         }
@@ -21,7 +22,7 @@ public class Feet : MonoBehaviour
 
     void OnCollisionExit2D(Collision2D collision)
     {
-        if (collision.transform.tag == "Floor")
+        if (collision.transform.tag == "Wall" || collision.transform.tag == "Market" || collision.transform.tag == "Floor")
         {
             if (player.canJump == true) // this triggers only if the player is not touching the ground anymore
             {

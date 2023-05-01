@@ -20,8 +20,8 @@ public class MarketScript : MonoBehaviour
 
     public void buy(Player player)
     {
-        if (player.gold > cost) {
-            player.gold -= cost;
+        if (player.getGold() >= cost) {
+            player.setGold(cost);
             player.addItem(itemProvided);
         }
     }
@@ -29,7 +29,7 @@ public class MarketScript : MonoBehaviour
     public void sell(Player player)
     {
         player.removeItem(itemProvided);
-        player.gold += cost;
+        player.setGold(-cost);
     }
 
     public string info()
